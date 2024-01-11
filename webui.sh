@@ -59,26 +59,28 @@ fi
 
 should_update=false
 
-while [ "$1" != "" ]; do
-    case $1 in
-        --update-check ) shift
-        
-                         if [ "$1" = "" ] || [ "$1" = "true" ]; then
-                             should_update=true
-                         fi
-                         break
-                         ;;
-        * )             shift
-                         ;;
+args=("$@")
+
+for ((i=0; i < $#; i++)); do
+    case ${args[i]} in
+        --update-check)
+            if [ "${args[i+1]}" = "" ] || [ "${args[i+1]}" = "true" ]; then
+                should_update=true
+                break
+            fi
+            ;;
+        *)
+            ;;
     esac
 done
 
 if [ "$should_update" = "true" ]; then
-    printf "Executing git pull --rebase --autostash"
+    printf "Executing git pull --rebase --autostash\n"
     git pull --rebase --autostash
 else
-    printf "Update check not required or not set to true, skipping git pull"
+    printf "Update check not required or not set to true, skipping git pull\n"
 fi
+
 
 # python3 venv without trailing slash (defaults to ${install_dir}/${clone_dir}/venv)
 if [[ -z "${venv_dir}" ]] && [[ $use_venv -eq 1 ]]
