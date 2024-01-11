@@ -427,7 +427,8 @@ def prepare_environment():
     if not args.skip_install:
         run_extensions_installers(settings_file=args.ui_settings_file)
 
-    if args.update_check:
+    #if args.update_check:
+    if False: #already checked in webui.sh.
         version_check(commit)
         startup_timer.record("check version")
 

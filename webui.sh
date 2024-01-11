@@ -58,6 +58,8 @@ else
 fi
 
 should_update=false
+should_switch_branch=false
+branch_name=""
 
 args=("$@")
 
@@ -66,16 +68,33 @@ for ((i=0; i < $#; i++)); do
         --update-check)
             if [ "${args[i+1]}" = "" ] || [ "${args[i+1]}" = "true" ]; then
                 should_update=true
-                break
             fi
+            ;;
+        --branch)
+            should_switch_branch=true
+            branch_name=${args[i+1]}
             ;;
         *)
             ;;
     esac
 done
 
+current_branch=$(git rev-parse --abbrev-ref HEAD)
+if [ "$should_switch_branch" = "true" ] && [ -n "$branch_name" ]; then
+    if [ "$current_branch" = "$branch_name" ]; then
+        printf "Already on branch %s\n" "$branch_name"
+    else
+        printf "Switching from branch %s to branch %s\n" "$current_branch" "$branch_name"
+        git checkout "$branch_name"
+        if [ $? -ne 0 ]; then
+            printf "Failed to switch to branch %s\n" "$branch_name"
+            exit 1
+        fi
+    fi
+fi
+
 if [ "$should_update" = "true" ]; then
-    printf "Executing git pull --rebase --autostash\n"
+    printf "Executing git pull --rebase --autostash on branch %s\n" "$branch_name"
     git pull --rebase --autostash
 else
     printf "Update check not required or not set to true, skipping git pull\n"
