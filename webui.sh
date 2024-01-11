@@ -6,32 +6,6 @@
 
 #!/bin/bash
 
-# 初始化标志变量
-should_update=false
-
-# 遍历所有传入的参数
-while [ "$1" != "" ]; do
-    case $1 in
-        --update-check ) shift
-                         # 检查是否没有值或值为true
-                         if [ "$1" = "" ] || [ "$1" = "true" ]; then
-                             should_update=true
-                         fi
-                         break
-                         ;;
-        * )             shift
-                         ;;
-    esac
-done
-
-# 根据标志变量执行 git pull --autostash
-if [ "$should_update" = "true" ]; then
-    printf "Executing git pull --rebase --autostash"
-    git pull --rebase --autostash
-else
-    printf "Update check not required or not set to true, skipping git pull"
-fi
-
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 
@@ -81,6 +55,29 @@ then
     export GIT="git"
 else
     export GIT_PYTHON_GIT_EXECUTABLE="${GIT}"
+fi
+
+should_update=false
+
+while [ "$1" != "" ]; do
+    case $1 in
+        --update-check ) shift
+        
+                         if [ "$1" = "" ] || [ "$1" = "true" ]; then
+                             should_update=true
+                         fi
+                         break
+                         ;;
+        * )             shift
+                         ;;
+    esac
+done
+
+if [ "$should_update" = "true" ]; then
+    printf "Executing git pull --rebase --autostash"
+    git pull --rebase --autostash
+else
+    printf "Update check not required or not set to true, skipping git pull"
 fi
 
 # python3 venv without trailing slash (defaults to ${install_dir}/${clone_dir}/venv)
