@@ -56,7 +56,6 @@ then
 else
     export GIT_PYTHON_GIT_EXECUTABLE="${GIT}"
 fi
-
 should_update=false
 should_switch_branch=false
 branch_name=""
@@ -66,9 +65,7 @@ args=("$@")
 for ((i=0; i < $#; i++)); do
     case ${args[i]} in
         --update-check)
-            if [ "${args[i+1]}" = "" ] || [ "${args[i+1]}" = "true" ]; then
-                should_update=true
-            fi
+            should_update=true
             ;;
         --branch)
             should_switch_branch=true
@@ -97,9 +94,8 @@ if [ "$should_update" = "true" ]; then
     printf "Executing git pull --rebase --autostash on branch %s\n" "$branch_name"
     git pull --rebase --autostash
 else
-    printf "Update check not required or not set to true, skipping git pull\n"
+    printf "Update check not required, skipping git pull\n"
 fi
-
 
 # python3 venv without trailing slash (defaults to ${install_dir}/${clone_dir}/venv)
 if [[ -z "${venv_dir}" ]] && [[ $use_venv -eq 1 ]]
