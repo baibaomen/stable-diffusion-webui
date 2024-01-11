@@ -26,10 +26,10 @@ done
 
 # 根据标志变量执行 git pull --autostash
 if [ "$should_update" = "true" ]; then
-    echo "Executing git pull --rebase --autostash"
+    printf "Executing git pull --rebase --autostash"
     git pull --rebase --autostash
 else
-    echo "Update check not required or not set to true, skipping git pull"
+    printf "Update check not required or not set to true, skipping git pull"
 fi
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
