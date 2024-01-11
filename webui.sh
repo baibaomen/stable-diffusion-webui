@@ -76,6 +76,13 @@ for ((i=0; i < $#; i++)); do
     esac
 done
 
+if [ "$should_update" = "true" ]; then
+    printf "Executing git pull --rebase --autostash on branch %s\n" "$branch_name"
+    git pull --rebase --autostash
+else
+    printf "Update check not required, skipping git pull\n"
+fi
+
 current_branch=$(git rev-parse --abbrev-ref HEAD)
 if [ "$should_switch_branch" = "true" ] && [ -n "$branch_name" ]; then
     if [ "$current_branch" = "$branch_name" ]; then
@@ -88,13 +95,6 @@ if [ "$should_switch_branch" = "true" ] && [ -n "$branch_name" ]; then
             exit 1
         fi
     fi
-fi
-
-if [ "$should_update" = "true" ]; then
-    printf "Executing git pull --rebase --autostash on branch %s\n" "$branch_name"
-    git pull --rebase --autostash
-else
-    printf "Update check not required, skipping git pull\n"
 fi
 
 # python3 venv without trailing slash (defaults to ${install_dir}/${clone_dir}/venv)
