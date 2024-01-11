@@ -6,38 +6,30 @@
 
 #!/bin/bash
 
-# 初始化变量，默认不执行更新
-PERFORM_UPDATE=false
+# 初始化标志变量
+should_update=false
 
-# 遍历所有参数
-while [[ $# -gt 0 ]]; do
-  key="$1"
-
-  case $key in
-    --update-check)
-      # 如果后面没有参数了，或者下一参数的值是 "true"
-      if [[ -z "$2" || "$2" == "true" ]]; then
-        PERFORM_UPDATE=true
-        # 如果参数的值不是以 '-' 开头的话，视为值，跳过它
-        if [[ -n "$2" && "$2" != -* ]]; then
-          shift
-        fi
-      fi
-      shift # 跳过参数的键("--update-check")
-      ;;
-    *)
-      # 对于不认识的参数，可以选择跳过，或者记录错误
-      shift # 如果选择跳过，保持这行。如果要记录错误，可以在这里添加代码
-      ;;
-  esac
+# 遍历所有传入的参数
+while [ "$1" != "" ]; do
+    case $1 in
+        --update-check ) shift
+                         # 检查是否没有值或值为true
+                         if [ "$1" = "" ] || [ "$1" = "true" ]; then
+                             should_update=true
+                         fi
+                         break
+                         ;;
+        * )             shift
+                         ;;
+    esac
 done
 
-# 根据PERFORM_UPDATE变量决定是否执行git pull --autostash命令
-if [ "$PERFORM_UPDATE" = true ]; then
-    echo "Updating the repository with 'git pull --autostash' ..."
+# 根据标志变量执行 git pull --autostash
+if [ "$should_update" = "true" ]; then
+    echo "Executing git pull --autostash"
     git pull --autostash
 else
-    #echo "Skipping update check, 'git pull --autostash' will not be performed."
+    echo "Update check not required or not set to true, skipping git pull"
 fi
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
