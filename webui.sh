@@ -26,8 +26,8 @@ done
 
 # 根据标志变量执行 git pull --autostash
 if [ "$should_update" = "true" ]; then
-    echo "Executing git pull --autostash"
-    git pull --autostash
+    echo "Executing git pull --rebase --autostash"
+    git pull --rebase --autostash
 else
     echo "Update check not required or not set to true, skipping git pull"
 fi
