@@ -4,6 +4,42 @@
 # change the variables in webui-user.sh instead #
 #################################################
 
+#!/bin/bash
+
+# 初始化变量，默认不执行更新
+PERFORM_UPDATE=false
+
+# 遍历所有参数
+while [[ $# -gt 0 ]]; do
+  key="$1"
+
+  case $key in
+    --update-check)
+      # 如果后面没有参数了，或者下一参数的值是 "true"
+      if [[ -z "$2" || "$2" == "true" ]]; then
+        PERFORM_UPDATE=true
+        # 如果参数的值不是以 '-' 开头的话，视为值，跳过它
+        if [[ -n "$2" && "$2" != -* ]]; then
+          shift
+        fi
+      fi
+      shift # 跳过参数的键("--update-check")
+      ;;
+    *)
+      # 对于不认识的参数，可以选择跳过，或者记录错误
+      shift # 如果选择跳过，保持这行。如果要记录错误，可以在这里添加代码
+      ;;
+  esac
+done
+
+# 根据PERFORM_UPDATE变量决定是否执行git pull --autostash命令
+if [ "$PERFORM_UPDATE" = true ]; then
+    echo "Updating the repository with 'git pull --autostash' ..."
+    git pull --autostash
+else
+    #echo "Skipping update check, 'git pull --autostash' will not be performed."
+fi
+
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 
